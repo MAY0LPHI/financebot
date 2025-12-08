@@ -1,0 +1,42 @@
+{
+  "name": "bot-fin-site",
+  "version": "1.0.0",
+  "description": "Sistema de controle financeiro com bot conversacional e painel web",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "install:all": "npm install && npm install --workspace=backend && npm install --workspace=frontend && npm install --workspace=shared",
+    "dev:backend": "npm run start:dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:shared": "npm run build --workspace=shared",
+    "build:backend": "npm run build:shared && npm run build --workspace=backend",
+    "build:frontend": "npm run build:shared && npm run build --workspace=frontend",
+    "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "lint:backend": "npm run lint --workspace=backend",
+    "lint:frontend": "npm run lint --workspace=frontend",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "format:backend": "npm run format --workspace=backend",
+    "format:frontend": "npm run format --workspace=frontend",
+    "format": "npm run format:backend && npm run format:frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:frontend": "npm run test --workspace=frontend",
+    "test": "npm run test:backend && npm run test:frontend",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "prisma:migrate": "npm run prisma:migrate --workspace=backend",
+    "prisma:seed": "npm run prisma:seed --workspace=backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

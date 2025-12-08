@@ -1,0 +1,13 @@
+type,amount,currency,description,date,isPaid
+EXPENSE,45.50,BRL,Restaurante - Almoço,2024-01-15,true
+EXPENSE,120.00,BRL,Supermercado Pão de Açúcar,2024-01-16,true
+EXPENSE,80.00,BRL,Posto de Gasolina,2024-01-17,true
+INCOME,3500.00,BRL,Salário Janeiro,2024-01-05,true
+EXPENSE,25.00,BRL,Uber para o trabalho,2024-01-18,true
+EXPENSE,150.00,BRL,Conta de luz,2024-01-10,true
+EXPENSE,90.00,BRL,Internet fibra,2024-01-10,true
+EXPENSE,35.00,BRL,Netflix,2024-01-12,true
+EXPENSE,200.00,BRL,Academia - Mensalidade,2024-01-08,true
+INCOME,500.00,BRL,Freelance projeto,2024-01-20,true
+EXPENSE,60.00,BRL,Farmácia - Medicamentos,2024-01-14,true
+EXPENSE,180.00,BRL,Roupas - Loja,2024-01-22,true

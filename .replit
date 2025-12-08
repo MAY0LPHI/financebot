@@ -1,0 +1,55 @@
+modules = ["bash", "web", "nodejs-20", "postgresql-16"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+JWT_SECRET = "800941e40faaa7d154f06ce2020b39e5609c415ec79b0f722e8c0a7b474e2cf9"
+CORS_ORIGIN = "https://839d4623-bb05-4d1e-8395-25bf8d72216c-00-259wm96erp3pl.janeway.replit.dev"
+NEXT_PUBLIC_API_BASE_URL = "http://localhost:3001"
+JWT_REFRESH_SECRET = "refresh_800941e40faaa7d154f06ce2020b39e5609c415ec79b0f722e8c0a7b474e2cf9"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "dev server"
+
+[[workflows.workflow]]
+name = "dev server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 45621
+externalPort = 3002
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["bash", "-c", "npm run start:prod --prefix backend & npm run start --prefix frontend"]
+build = ["npm", "run", "build"]
