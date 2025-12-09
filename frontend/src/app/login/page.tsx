@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('Demo123!');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +24,6 @@ export default function LoginPage() {
       const response = await authApi.login({ email, password });
       
       if (response.data.requiresTwoFactor) {
-        // Handle 2FA if needed
         alert('2FA required - not implemented in this demo');
         setLoading(false);
         return;
@@ -35,6 +35,25 @@ export default function LoginPage() {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
       setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setError('');
+    setDemoLoading(true);
+
+    try {
+      const response = await authApi.login({ 
+        email: 'demo@finbot.test', 
+        password: 'Demo123!' 
+      });
+      
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError('Demo login failed. Try again in a few seconds.');
+      setDemoLoading(false);
     }
   };
 
@@ -81,17 +100,21 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Entrando...' : 'Entrar'}
             </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full mt-2" 
+              onClick={handleDemoLogin}
+              disabled={demoLoading}
+            >
+              {demoLoading ? 'Entrando...' : 'Entrar como Demo'}
+            </Button>
           </form>
           <div className="mt-4 text-center text-sm">
             <span className="text-muted-foreground">Não tem uma conta? </span>
             <a href="/register" className="text-primary hover:underline">
               Criar conta
             </a>
-          </div>
-          <div className="mt-2 text-center text-xs text-muted-foreground">
-            <p>Credenciais de demo:</p>
-            <p>Email: demo@finbot.test</p>
-            <p>Senha: Demo123!</p>
           </div>
         </CardContent>
       </Card>
