@@ -119,22 +119,9 @@ export default function WhatsAppPairingConsolePage() {
     setPairingCode(null);
 
     try {
-      // Initialize the session
+      // Initialize the session - QR code will be received via WebSocket
       await whatsappApi.initSession(sessionName);
-      
-      // Wait a bit for the QR code to be generated
-      setTimeout(async () => {
-        try {
-          const res = await whatsappApi.getQrCode(sessionName);
-          if (res.data.qrCode) {
-            setQrCode(res.data.qrCode);
-            setLoading(false);
-          }
-        } catch (err: any) {
-          // QR might not be ready yet, socket will update us
-          console.log('QR not ready yet, waiting for socket update');
-        }
-      }, 2000);
+      // Keep loading state - it will be cleared when QR arrives via socket or error occurs
     } catch (err: any) {
       console.error('Error generating pairing data:', err);
       setError(err.response?.data?.message || 'Failed to generate pairing data');

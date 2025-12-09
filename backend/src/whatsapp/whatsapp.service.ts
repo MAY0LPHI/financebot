@@ -107,11 +107,12 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
       clientData.status = 'QR_READY';
 
       // Convert QR code to data URL for frontend
-      let qrDataUrl = qr;
+      let qrDataUrl: string;
       try {
-        qrDataUrl = await QRCode.toDataURL(qr);
+        qrDataUrl = await this.convertQrToDataUrl(qr);
       } catch (error) {
-        console.error('Error generating QR code image:', error);
+        console.error('Failed to convert QR code to image, session may not connect properly:', error);
+        qrDataUrl = qr; // Fallback to raw string (will likely fail on frontend)
       }
 
       await this.prisma.whatsAppSession.update({
@@ -214,6 +215,15 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
+  private async convertQrToDataUrl(qrString: string): Promise<string> {
+    try {
+      return await QRCode.toDataURL(qrString);
+    } catch (error) {
+      console.error('Error generating QR code image:', error);
+      throw new Error('Failed to generate QR code image');
+    }
+  }
+
   async getSessionStatus(sessionName: string): Promise<{
     status: WhatsAppStatus;
     qrCode: string | null;
@@ -247,13 +257,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     }
 
     // Convert QR code string to data URL
-    try {
-      const qrDataUrl = await QRCode.toDataURL(clientData.qrCode);
-      return qrDataUrl;
-    } catch (error) {
-      console.error('Error generating QR code image:', error);
-      return clientData.qrCode; // Fallback to raw QR string
-    }
+    return this.convertQrToDataUrl(clientData.qrCode);
   }
 
   async requestPairingCode(sessionName: string, phoneNumber: string): Promise<string | null> {
