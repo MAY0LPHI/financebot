@@ -67,7 +67,7 @@ export class AdminService {
 
   async updateUser(id: string, dto: UpdateUserDto) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -89,7 +89,7 @@ export class AdminService {
 
   async deleteUser(id: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }

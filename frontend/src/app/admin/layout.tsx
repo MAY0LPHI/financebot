@@ -10,6 +10,7 @@ const adminLinks = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/users', label: 'Usuários' },
   { href: '/admin/whatsapp', label: 'WhatsApp' },
+  { href: '/admin/whatsapp-pairing', label: 'WhatsApp Pairing Console' },
   { href: '/admin/settings', label: 'Configurações' },
   { href: '/admin/logs', label: 'Logs de Auditoria' },
 ];

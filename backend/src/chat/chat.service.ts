@@ -14,7 +14,8 @@ export class ChatService {
     // Add expense
     if (lowerMessage.includes('despesa') || lowerMessage.includes('gasto')) {
       return {
-        response: 'Para adicionar uma despesa, preciso saber: valor, descrição e categoria. Por exemplo: "Despesa de R$ 50 em alimentação para almoço"',
+        response:
+          'Para adicionar uma despesa, preciso saber: valor, descrição e categoria. Por exemplo: "Despesa de R$ 50 em alimentação para almoço"',
         sessionId: newSessionId,
         action: {
           type: 'confirm_transaction',
@@ -26,7 +27,8 @@ export class ChatService {
     // Add income
     if (lowerMessage.includes('receita') || lowerMessage.includes('renda')) {
       return {
-        response: 'Para adicionar uma receita, preciso saber: valor, descrição e categoria. Por exemplo: "Receita de R$ 3000 salário"',
+        response:
+          'Para adicionar uma receita, preciso saber: valor, descrição e categoria. Por exemplo: "Receita de R$ 3000 salário"',
         sessionId: newSessionId,
         action: {
           type: 'confirm_transaction',
