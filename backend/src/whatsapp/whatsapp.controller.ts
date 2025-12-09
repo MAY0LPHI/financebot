@@ -56,6 +56,7 @@ export class WhatsAppController {
 
   @Get('qr/:sessionName')
   @ApiOperation({ summary: 'Get QR code for session' })
+  // Returns QR code as a data URL (image/png base64) for display in frontend
   async getQrCode(@Param('sessionName') sessionName: string) {
     const qrCode = await this.whatsappService.getQrCode(sessionName);
     if (!qrCode) {
