@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChatWidget } from '@/components/chat-widget';
-import { accountsApi, transactionsApi, reportsApi, authApi } from '@/lib/api';
+import { accountsApi, transactionsApi, reportsApi } from '@/lib/api';
 import Link from 'next/link';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import ReactECharts from 'echarts-for-react';
@@ -14,50 +12,34 @@ const DAYS_IN_REPORT = 30;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [cashFlow, setCashFlow] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
     loadData();
-  }, [router]);
+  }, []);
 
   const loadData = async () => {
     try {
       const reportStartDate = new Date(Date.now() - DAYS_IN_REPORT * MS_PER_DAY);
       const reportEndDate = new Date();
 
-      const [accountsRes, transactionsRes, cashFlowRes, profileRes] = await Promise.all([
+      const [accountsRes, transactionsRes, cashFlowRes] = await Promise.all([
         accountsApi.getAll(),
         transactionsApi.getAll({ limit: 5 }),
         reportsApi.getCashFlow(reportStartDate.toISOString(), reportEndDate.toISOString()),
-        authApi.getProfile(),
       ]);
 
       setAccounts(accountsRes.data);
       setTransactions(transactionsRes.data);
       setCashFlow(cashFlowRes.data);
-      setIsAdmin(profileRes.data?.role === 'ADMIN');
       setLoading(false);
     } catch (error) {
       console.error('Error loading data:', error);
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    router.push('/login');
   };
 
   const totalBalance = accounts.reduce((sum, acc) => sum + Number(acc.balance), 0);
@@ -85,32 +67,11 @@ export default function DashboardPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>Carregando...</p>
-      </div>
-    );
+    return <p>Carregando...</p>;
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">FinBot Dashboard</h1>
-          <div className="flex gap-2">
-            {isAdmin && (
-              <Link href="/admin">
-                <Button variant="outline">Painel Admin</Button>
-              </Link>
-            )}
-            <Button onClick={handleLogout} variant="outline">
-              Sair
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+    <div>
         <div className="grid gap-6 md:grid-cols-3 mb-8">
           <Card>
             <CardHeader>
@@ -149,12 +110,15 @@ export default function DashboardPage() {
 
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle>Contas</CardTitle>
+              <Link href="/dashboard/contas">
+                <Button variant="outline" size="sm">Ver Todas</Button>
+              </Link>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {accounts.map((account) => (
+                {accounts.slice(0, 5).map((account) => (
                   <div key={account.id} className="flex justify-between items-center p-2 rounded hover:bg-accent">
                     <div>
                       <p className="font-medium">{account.name}</p>
@@ -163,13 +127,19 @@ export default function DashboardPage() {
                     <p className="font-bold">{formatCurrency(Number(account.balance))}</p>
                   </div>
                 ))}
+                {accounts.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Nenhuma conta cadastrada</p>
+                )}
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle>Transações Recentes</CardTitle>
+              <Link href="/dashboard/transacoes">
+                <Button variant="outline" size="sm">Ver Todas</Button>
+              </Link>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -187,22 +157,22 @@ export default function DashboardPage() {
                     </p>
                   </div>
                 ))}
+                {transactions.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Nenhuma transação cadastrada</p>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Análise de Fluxo de Caixa</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ReactECharts option={chartOption} style={{ height: '400px' }} />
-          </CardContent>
-        </Card>
-      </main>
-
-      <ChatWidget />
+      <Card>
+        <CardHeader>
+          <CardTitle>Análise de Fluxo de Caixa</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReactECharts option={chartOption} style={{ height: '400px' }} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
