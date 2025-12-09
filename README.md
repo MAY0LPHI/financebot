@@ -47,6 +47,7 @@ make help        # Ver todos os comandos
 
 Para instruções detalhadas de instalação, configuração e uso, consulte:
 - [**SETUP.md**](SETUP.md) - Guia completo de instalação e configuração
+- [**WhatsApp Pairing Console**](docs/WHATSAPP_PAIRING_CONSOLE.md) - Console de pareamento WhatsApp
 - [**API Docs**](http://localhost:3001/api/docs) - Swagger/OpenAPI (após iniciar)
 - [**API Collection**](docs/API_COLLECTION.json) - Postman/Insomnia
 

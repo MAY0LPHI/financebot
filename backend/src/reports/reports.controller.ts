@@ -17,11 +17,7 @@ export class ReportsController {
     @Query('dateFrom') dateFrom: string,
     @Query('dateTo') dateTo: string,
   ) {
-    return this.reportsService.getCashFlow(
-      req.user.userId,
-      new Date(dateFrom),
-      new Date(dateTo),
-    );
+    return this.reportsService.getCashFlow(req.user.userId, new Date(dateFrom), new Date(dateTo));
   }
 
   @Get('expenses-by-category')

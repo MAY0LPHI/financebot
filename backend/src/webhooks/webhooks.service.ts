@@ -8,7 +8,7 @@ export class WebhooksService {
   async processBankWebhook(data: any) {
     // Mock webhook processing
     console.log('Processing bank webhook:', data);
-    
+
     return {
       received: true,
       message: 'Webhook processed successfully (mock)',

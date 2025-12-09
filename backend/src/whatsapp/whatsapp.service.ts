@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { WhatsAppStatus } from '@prisma/client';
 import { Client, LocalAuth } from 'whatsapp-web.js';
 import * as qrcode from 'qrcode-terminal';
+import * as QRCode from 'qrcode';
 import { CommandParserService } from './command-parser.service';
 import { WhatsAppGateway } from './whatsapp.gateway';
 
@@ -101,17 +102,32 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     client.on('qr', async (qr) => {
       console.log(`QR received for session ${sessionName}`);
       qrcode.generate(qr, { small: true });
-      
+
       clientData.qrCode = qr;
       clientData.status = 'QR_READY';
+
+      // Convert QR code to data URL for frontend
+      let qrDataUrl: string;
+      try {
+        qrDataUrl = await this.convertQrToDataUrl(qr);
+      } catch (error) {
+        console.error('Failed to convert QR code to data URL image, frontend may not display QR properly:', error);
+        // Emit error status instead of attempting to continue with invalid data
+        await this.prisma.whatsAppSession.update({
+          where: { name: sessionName },
+          data: { status: 'DISCONNECTED' },
+        });
+        this.emitStatusUpdate(sessionName, 'DISCONNECTED');
+        return; // Don't emit QR code if conversion failed
+      }
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
         data: { status: 'QR_READY', qrCode: qr },
       });
 
-      this.emitStatusUpdate(sessionName, 'QR_READY', qr);
-      this.gateway.emitQrCode(sessionName, qr);
+      this.emitStatusUpdate(sessionName, 'QR_READY', qrDataUrl);
+      this.gateway.emitQrCode(sessionName, qrDataUrl);
     });
 
     client.on('ready', async () => {
@@ -121,8 +137,8 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
-        data: { 
-          status: 'CONNECTED', 
+        data: {
+          status: 'CONNECTED',
           qrCode: null,
           lastActive: new Date(),
         },
@@ -190,7 +206,12 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private emitStatusUpdate(sessionName: string, status: WhatsAppStatus, qrCode?: string | null, pairingCode?: string | null) {
+  private emitStatusUpdate(
+    sessionName: string,
+    status: WhatsAppStatus,
+    qrCode?: string | null,
+    pairingCode?: string | null,
+  ) {
     this.gateway.emitStatusUpdate({
       sessionName,
       status,
@@ -200,13 +221,22 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
+  private async convertQrToDataUrl(qrString: string): Promise<string> {
+    try {
+      return await QRCode.toDataURL(qrString);
+    } catch (error) {
+      console.error('Error generating QR code image:', error);
+      throw new Error('Failed to generate QR code image');
+    }
+  }
+
   async getSessionStatus(sessionName: string): Promise<{
     status: WhatsAppStatus;
     qrCode: string | null;
     pairingCode: string | null;
   }> {
     const clientData = this.clients.get(sessionName);
-    
+
     if (clientData) {
       return {
         status: clientData.status,
@@ -228,12 +258,17 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
 
   async getQrCode(sessionName: string): Promise<string | null> {
     const clientData = this.clients.get(sessionName);
-    return clientData?.qrCode || null;
+    if (!clientData?.qrCode) {
+      return null;
+    }
+
+    // Convert QR code string to data URL
+    return this.convertQrToDataUrl(clientData.qrCode);
   }
 
   async requestPairingCode(sessionName: string, phoneNumber: string): Promise<string | null> {
     const clientData = this.clients.get(sessionName);
-    
+
     if (!clientData) {
       throw new Error('Session not initialized');
     }
@@ -258,7 +293,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
 
   async disconnectSession(sessionName: string): Promise<{ success: boolean; message: string }> {
     const clientData = this.clients.get(sessionName);
-    
+
     if (!clientData) {
       return { success: false, message: 'Session not found' };
     }
@@ -270,7 +305,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
-        data: { 
+        data: {
           status: 'DISCONNECTED',
           qrCode: null,
           pairingCode: null,
@@ -289,7 +324,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
 
   async sendMessage(sessionName: string, phoneNumber: string, message: string): Promise<boolean> {
     const clientData = this.clients.get(sessionName);
-    
+
     if (!clientData || clientData.status !== 'CONNECTED') {
       throw new Error('Session not connected');
     }
@@ -308,14 +343,16 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     console.log(`Message received on ${sessionName}:`, message.body);
 
     const phoneNumber = message.from.replace('@c.us', '');
-    
+
     const contact = await this.prisma.whatsAppContact.findUnique({
       where: { phoneNumber },
       include: { user: true },
     });
 
     if (!contact || !contact.isVerified) {
-      await message.reply('Seu número não está cadastrado ou verificado. Entre em contato com o administrador.');
+      await message.reply(
+        'Seu número não está cadastrado ou verificado. Entre em contato com o administrador.',
+      );
       return;
     }
 
@@ -325,7 +362,9 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
       await message.reply(result.message);
     } catch (error) {
       console.error('Error processing command:', error);
-      await message.reply('Desculpe, ocorreu um erro ao processar seu comando. Por favor, tente novamente.');
+      await message.reply(
+        'Desculpe, ocorreu um erro ao processar seu comando. Por favor, tente novamente.',
+      );
     }
   }
 

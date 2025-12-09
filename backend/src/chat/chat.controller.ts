@@ -12,10 +12,7 @@ export class ChatController {
 
   @Post()
   @ApiOperation({ summary: 'Send message to bot' })
-  async sendMessage(
-    @Request() req,
-    @Body() body: { message: string; sessionId?: string },
-  ) {
+  async sendMessage(@Request() req, @Body() body: { message: string; sessionId?: string }) {
     return this.chatService.processMessage(req.user.userId, body.message, body.sessionId);
   }
 }

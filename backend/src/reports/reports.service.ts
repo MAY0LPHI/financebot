@@ -41,14 +41,17 @@ export class ReportsService {
 
     const total = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-    const byCategory = transactions.reduce((acc, t) => {
-      const categoryName = t.category?.name || 'Uncategorized';
-      if (!acc[categoryName]) {
-        acc[categoryName] = 0;
-      }
-      acc[categoryName] += Number(t.amount);
-      return acc;
-    }, {} as Record<string, number>);
+    const byCategory = transactions.reduce(
+      (acc, t) => {
+        const categoryName = t.category?.name || 'Uncategorized';
+        if (!acc[categoryName]) {
+          acc[categoryName] = 0;
+        }
+        acc[categoryName] += Number(t.amount);
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return Object.entries(byCategory).map(([categoryName, amount]) => ({
       categoryName,

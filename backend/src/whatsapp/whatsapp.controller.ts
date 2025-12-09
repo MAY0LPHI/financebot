@@ -56,6 +56,7 @@ export class WhatsAppController {
 
   @Get('qr/:sessionName')
   @ApiOperation({ summary: 'Get QR code for session' })
+  // Returns QR code as a data URL (image/png base64) for display in frontend
   async getQrCode(@Param('sessionName') sessionName: string) {
     const qrCode = await this.whatsappService.getQrCode(sessionName);
     if (!qrCode) {
@@ -69,15 +70,9 @@ export class WhatsAppController {
 
   @Post('pair/:sessionName')
   @ApiOperation({ summary: 'Request pairing code for phone number' })
-  async requestPairingCode(
-    @Param('sessionName') sessionName: string,
-    @Body() dto: PairingCodeDto,
-  ) {
+  async requestPairingCode(@Param('sessionName') sessionName: string, @Body() dto: PairingCodeDto) {
     try {
-      const code = await this.whatsappService.requestPairingCode(
-        sessionName,
-        dto.phoneNumber,
-      );
+      const code = await this.whatsappService.requestPairingCode(sessionName, dto.phoneNumber);
       return { pairingCode: code };
     } catch (error) {
       throw new HttpException(
@@ -107,11 +102,7 @@ export class WhatsAppController {
     @Body() dto: { phoneNumber: string; message: string },
   ) {
     try {
-      await this.whatsappService.sendMessage(
-        sessionName,
-        dto.phoneNumber,
-        dto.message,
-      );
+      await this.whatsappService.sendMessage(sessionName, dto.phoneNumber, dto.message);
       return { success: true, message: 'Message sent successfully' };
     } catch (error) {
       throw new HttpException(
