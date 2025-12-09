@@ -21,7 +21,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { goalsApi } from '@/lib/api';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface Goal {
   id: string;
@@ -129,10 +129,6 @@ export default function MetasPage() {
       console.error('Error deleting goal:', error);
       alert('Erro ao excluir meta');
     }
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('pt-BR');
   };
 
   const calculateProgress = (current: string, target: string) => {

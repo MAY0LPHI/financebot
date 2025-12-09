@@ -145,10 +145,6 @@ export default function OrcamentosPage() {
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('pt-BR');
-  };
-
   const calculateProgress = (spent: string, amount: string) => {
     const spentNum = Number(spent);
     const amountNum = Number(amount);

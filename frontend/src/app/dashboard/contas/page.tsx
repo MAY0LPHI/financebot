@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { accountsApi } from '@/lib/api';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface Account {
   id: string;
@@ -116,10 +116,6 @@ export default function ContasPage() {
       console.error('Error deleting account:', error);
       alert('Erro ao excluir conta');
     }
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('pt-BR');
   };
 
   const accountTypes = [
