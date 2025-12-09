@@ -98,7 +98,7 @@ export const adminApi = {
     api.post('/admin/settings', data),
   deleteSetting: (key: string) => api.delete(`/admin/settings/${key}`),
   
-  getAuditLogs: (params?: { action?: string; userId?: string; startDate?: string; endDate?: string; entity?: string }) =>
+  getAuditLogs: (params?: { action?: string; userId?: string; startDate?: string; endDate?: string; entity?: string; limit?: number }) =>
     api.get('/admin/audit-logs', { params }),
   
   getWhatsAppSessions: () => api.get('/admin/whatsapp/sessions'),
