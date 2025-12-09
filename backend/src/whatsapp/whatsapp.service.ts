@@ -111,8 +111,14 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
       try {
         qrDataUrl = await this.convertQrToDataUrl(qr);
       } catch (error) {
-        console.error('Failed to convert QR code to image, session may not connect properly:', error);
-        qrDataUrl = qr; // Fallback to raw string (will likely fail on frontend)
+        console.error('Failed to convert QR code to data URL image, frontend may not display QR properly:', error);
+        // Emit error status instead of attempting to continue with invalid data
+        await this.prisma.whatsAppSession.update({
+          where: { name: sessionName },
+          data: { status: 'DISCONNECTED' },
+        });
+        this.emitStatusUpdate(sessionName, 'DISCONNECTED');
+        return; // Don't emit QR code if conversion failed
       }
 
       await this.prisma.whatsAppSession.update({
