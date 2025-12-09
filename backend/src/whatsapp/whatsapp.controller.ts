@@ -9,16 +9,23 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty } from 'class-validator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../admin/guards/admin.guard';
 import { WhatsAppService } from './whatsapp.service';
 
 class InitSessionDto {
+  @ApiProperty({ description: 'Name of the WhatsApp session', example: 'main-session' })
+  @IsString()
+  @IsNotEmpty()
   sessionName: string;
 }
 
 class PairingCodeDto {
+  @ApiProperty({ description: 'Phone number with country code', example: '5511999999999' })
+  @IsString()
+  @IsNotEmpty()
   phoneNumber: string;
 }
 
