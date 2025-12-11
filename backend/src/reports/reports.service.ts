@@ -53,7 +53,7 @@ export class ReportsService {
       {} as Record<string, number>,
     );
 
-    return Object.entries(byCategory).map(([categoryName, amount]) => ({
+    return Object.entries(byCategory).map(([categoryName, amount]: [string, number]) => ({
       categoryName,
       amount,
       percentage: total > 0 ? (amount / total) * 100 : 0,
