@@ -200,7 +200,7 @@ VALUES (gen_random_uuid(), '5511999999999', '<user-id>', true);
 
 ### Erro de compilação TypeScript
 
-Se você receber erro como `Module '"@prisma/client"' has no exported member`, execute:
+Se você receber um erro como `Module '"@prisma/client"' has no exported member`, execute:
 
 ```bash
 cd backend
