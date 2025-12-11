@@ -6,14 +6,49 @@ Controle suas finanças direto pelo WhatsApp! Registre receitas, despesas e cons
 
 ### No Git Bash (Windows)
 
+**Comando rápido (uma linha):**
 ```bash
 git clone https://github.com/MAY0LPHI/financebot.git && cd financebot && npm install && cd backend && npm install && npm run start:dev
 ```
 
+**Ou passo a passo:**
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/MAY0LPHI/financebot.git
+cd financebot
+
+# 2. Instalar dependências
+npm install
+cd backend
+npm install
+
+# 3. Iniciar o bot
+npm run start:dev
+```
+
 ### No Termux (Android)
 
+**Comando rápido (uma linha):**
 ```bash
 pkg install nodejs git -y && git clone https://github.com/MAY0LPHI/financebot.git && cd financebot && npm install && cd backend && npm install && npm run start:dev
+```
+
+**Ou passo a passo:**
+```bash
+# 1. Instalar dependências do sistema
+pkg install nodejs git -y
+
+# 2. Clonar o repositório
+git clone https://github.com/MAY0LPHI/financebot.git
+cd financebot
+
+# 3. Instalar dependências do projeto
+npm install
+cd backend
+npm install
+
+# 4. Iniciar o bot
+npm run start:dev
 ```
 
 ## 🔧 Configuração Inicial
@@ -158,6 +193,10 @@ Seu número precisa estar cadastrado no banco de dados. Após criar um usuário,
 INSERT INTO "WhatsAppContact" (id, "phoneNumber", "userId", "isVerified")
 VALUES (gen_random_uuid(), '5511999999999', '<user-id>', true);
 ```
+
+**Nota:** Substitua:
+- `5511999999999` pelo seu número WhatsApp com código do país (sem + ou espaços)
+- `<user-id>` pelo ID do usuário no banco de dados (pode ser obtido consultando a tabela User)
 
 ## 📚 Mais Informações
 
