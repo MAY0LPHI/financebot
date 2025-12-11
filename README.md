@@ -198,6 +198,17 @@ VALUES (gen_random_uuid(), '5511999999999', '<user-id>', true);
 - `5511999999999` pelo seu número WhatsApp com código do país (sem + ou espaços)
 - `<user-id>` pelo ID do usuário no banco de dados (pode ser obtido consultando a tabela User)
 
+### Erro de compilação TypeScript
+
+Se você receber erro como `Module '"@prisma/client"' has no exported member`, execute:
+
+```bash
+cd backend
+npx prisma generate
+```
+
+Isso regenera o Prisma Client com todos os tipos do schema.
+
 ## 📚 Mais Informações
 
 - **Comandos Completos**: Ver arquivo `WHATSAPP_BOT.md`
