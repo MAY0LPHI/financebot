@@ -1,231 +1,208 @@
-# Bot de Controle Financeiro via WhatsApp
+# 🤖 Bot de Controle Financeiro via WhatsApp
 
-Sistema de controle financeiro através de bot conversacional no WhatsApp.
+Controle suas finanças direto pelo WhatsApp! Registre receitas, despesas e consulte seu saldo através de mensagens.
 
-## 🎯 Visão Geral
+## 📱 Como Executar
 
-- **Bot WhatsApp** para registrar receitas, despesas, transferências e metas via mensagens
-- **Backend API** robusta com NestJS, Prisma, PostgreSQL e Redis
-- **Comandos em Português** para facilitar o uso
-- **Importação** de extratos (CSV/OFX)
-- **Multi-moeda** e categorização inteligente
-- **Relatórios** via comandos do bot
+### No Git Bash (Windows)
 
-## ⚡ Quick Start
-
-### Com Docker (Recomendado)
-
+**Comando rápido (uma linha):**
 ```bash
-# Clone o repositório
+git clone https://github.com/MAY0LPHI/financebot.git && cd financebot && npm install && cd backend && npm install && npm run start:dev
+```
+
+**Ou passo a passo:**
+```bash
+# 1. Clonar o repositório
 git clone https://github.com/MAY0LPHI/financebot.git
 cd financebot
 
-# Inicie os serviços
-docker compose up -d
-
-# Execute as migrações do banco
-docker compose exec backend npx prisma migrate deploy
-
-# Popule o banco com dados iniciais
-docker compose exec backend npm run prisma:seed
-```
-
-### Desenvolvimento Local
-
-```bash
-# Instale as dependências
-npm run install:all
-
-# Inicie o backend
-npm run dev
-
-# Acesse a API em:
-# http://localhost:3001
-# http://localhost:3001/api/docs
-```
-
-**API Backend**: http://localhost:3001  
-**Documentação da API (Swagger)**: http://localhost:3001/api/docs
-
-## 📚 Documentação Completa
-
-Para instruções detalhadas de instalação, configuração e uso, consulte:
-- [**SETUP.md**](SETUP.md) - Guia completo de instalação e configuração
-- [**WHATSAPP_BOT.md**](WHATSAPP_BOT.md) - Guia de uso do bot WhatsApp
-- [**API Docs**](http://localhost:3001/api/docs) - Swagger/OpenAPI (após iniciar)
-
-## 🏗️ Arquitetura
-
-```
-financebot/
-├── backend/              # NestJS + Prisma + PostgreSQL
-│   ├── src/
-│   │   ├── users/       # Gerenciamento de usuários
-│   │   ├── accounts/    # Contas bancárias
-│   │   ├── cards/       # Cartões de crédito/débito
-│   │   ├── categories/  # Categorização
-│   │   ├── transactions/# Transações financeiras
-│   │   ├── budgets/     # Orçamentos
-│   │   ├── goals/       # Metas financeiras
-│   │   ├── reports/     # Relatórios e analytics
-│   │   ├── import/      # Importação CSV/OFX
-│   │   ├── chat/        # Bot conversacional
-│   │   ├── whatsapp/    # Integração WhatsApp
-│   │   └── webhooks/    # Webhooks (mock)
-│   └── prisma/          # Schema e migrations
-├── shared/              # Tipos TypeScript compartilhados
-└── docker-compose.yml   # Stack completa
-```
-
-## ✨ Características
-
-### Funcionalidades Principais
-
-- ✅ **Bot WhatsApp** integrado com whatsapp-web.js para controle financeiro completo
-- ✅ **Pareamento via QR Code** para autenticação
-- ✅ Gerenciamento de contas bancárias e cartões
-- ✅ Registro de transações (receitas/despesas/transferências)
-- ✅ Categorização automática e manual
-- ✅ Metas e orçamentos com alertas
-- ✅ Importação de extratos (CSV/OFX)
-- ✅ Comandos em português para facilitar o uso
-- ✅ Relatórios via API REST
-- ✅ Multi-moeda com conversão
-- ✅ API REST completa com Swagger
-
-### Segurança
-
-- 🔒 Rate limiting por IP
-- 🔒 Validação e sanitização de entrada
-- 🔒 CORS configurável
-- 🔒 Proteção contra SQL injection (via Prisma)
-- 🔒 Sessões WhatsApp criptografadas
-- 🔒 Verificação de contatos WhatsApp autorizados
-
-## 🛠️ Tecnologias
-
-### Backend
-- **NestJS** - Framework Node.js enterprise
-- **Prisma** - ORM type-safe
-- **PostgreSQL** - Banco de dados relacional
-- **Redis** - Cache e sessões
-- **Swagger** - Documentação OpenAPI
-- **TypeScript** - Type safety completo
-
-### WhatsApp Integration
-- **whatsapp-web.js** - Biblioteca WhatsApp Web
-- **qrcode** - Geração de QR codes para pareamento
-- **qrcode-terminal** - QR codes no terminal
-- **Command parser** - Processamento de linguagem natural
-
-### DevOps
-- **Docker** - Containerização
-- **Docker Compose** - Orquestração
-- **ESLint** - Linting
-- **Prettier** - Formatação
-- **Jest** - Testes
-
-## 📋 Funcionalidades Adicionais
-
-- Upload/parse de extratos (CSV/OFX) com conciliação
-- Regras de categorização por descrição, valor, conta
-- Metas/orçamentos com alertas percentuais
-- Exportação/importação (CSV/JSON)
-- Logs de auditoria por usuário
-- Notificações configuráveis
-- Suporte a múltiplas moedas
-- Conversões de moeda configuráveis
-- Fluxo de caixa projetado
-- DRE simplificada
-- Saldo consolidado por conta
-- Despesas por categoria
-- Webhooks mockados para integração bancária
-
-## 🧪 Testes
-
-```bash
-# Backend
+# 2. Instalar dependências
+npm install
 cd backend
-npm run test          # Testes unitários
-npm run test:e2e      # Testes E2E
-npm run test:cov      # Coverage
+npm install
 
-# Com Make
-make test
+# 3. Iniciar o bot
+npm run start:dev
 ```
 
-## 🚀 Deploy
+### No Termux (Android)
 
-Ver [SETUP.md](SETUP.md#deploy) para instruções de deploy em produção.
+**Comando rápido (uma linha):**
+```bash
+pkg install nodejs git -y && git clone https://github.com/MAY0LPHI/financebot.git && cd financebot && npm install && cd backend && npm install && npm run start:dev
+```
 
-## 📝 Comandos Principais
+**Ou passo a passo:**
+```bash
+# 1. Instalar dependências do sistema
+pkg install nodejs git -y
+
+# 2. Clonar o repositório
+git clone https://github.com/MAY0LPHI/financebot.git
+cd financebot
+
+# 3. Instalar dependências do projeto
+npm install
+cd backend
+npm install
+
+# 4. Iniciar o bot
+npm run start:dev
+```
+
+## 🔧 Configuração Inicial
+
+### 1. Configurar Banco de Dados
+
+Antes de iniciar, você precisa ter PostgreSQL e Redis instalados, ou usar Docker:
+
+**Com Docker (Recomendado):**
+```bash
+docker compose up -d postgres redis
+```
+
+**Sem Docker:**
+- Instale PostgreSQL e Redis no seu sistema
+- Crie um arquivo `.env` na pasta `backend/` baseado no `.env.example`
+- Configure a `DATABASE_URL` e `REDIS_URL`
+
+### 2. Inicializar o Banco
 
 ```bash
-# Desenvolvimento
-make dev              # Inicia dev servers
-make docker-up        # Inicia com Docker
-make seed             # Popula banco de dados
-
-# Build
-make build            # Build completo
-
-# Testes
-make test             # Roda todos os testes
-
-# Linting
-make lint             # Lint código
-make format           # Formata código
-
-# Docker
-make docker-logs      # Ver logs
-make docker-down      # Parar containers
-make docker-restart   # Reiniciar containers
-
-# Database
-make migrate          # Rodar migrations
-make studio           # Abrir Prisma Studio
+cd backend
+npx prisma migrate deploy
+npm run prisma:seed
 ```
 
-## 🔧 Desenvolvimento
+### 3. Iniciar o Bot
 
-### Estrutura de Pastas
+O bot iniciará automaticamente quando você executar `npm run start:dev`.
 
-- `backend/src/` - Código fonte da API NestJS
-- `backend/prisma/` - Schema do banco e migrations
-- `shared/src/` - Tipos TypeScript compartilhados
-- `docs/` - Documentação adicional
-- `scripts/` - Scripts utilitários
-- `.local/` - Arquivos locais do WhatsApp (sessões, cache)
+O servidor ficará disponível em: `http://localhost:3001`
 
-### Comandos NPM
+## 📲 Conectar WhatsApp
+
+### 1. Iniciar Sessão
+
+Após iniciar o servidor, use curl ou Postman para iniciar uma sessão:
 
 ```bash
-npm run dev              # Desenvolvimento
-npm run build            # Build
-npm run start            # Produção
-npm run lint             # Lint
-npm run format           # Format
-npm run test             # Testes
+curl -X POST http://localhost:3001/whatsapp/init -H "Content-Type: application/json" -d '{"sessionName": "minha-sessao"}'
 ```
 
-## 🤝 Contribuindo
+### 2. Obter QR Code
 
-Contribuições são bem-vindas! Por favor:
+```bash
+curl http://localhost:3001/whatsapp/qr/minha-sessao
+```
 
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/NovaFeature`)
-3. Commit suas mudanças (`git commit -m 'Add NovaFeature'`)
-4. Push para a branch (`git push origin feature/NovaFeature`)
-5. Abra um Pull Request
+Escaneie o QR code com seu WhatsApp em:
+**Configurações > Aparelhos Conectados > Conectar um aparelho**
 
-## 📞 Suporte
+### 3. Verificar Status
 
-Para questões e suporte, abra uma [issue no GitHub](https://github.com/MAY0LPHI/financebot/issues).
+```bash
+curl http://localhost:3001/whatsapp/status/minha-sessao
+```
+
+## 💬 Comandos do Bot
+
+Envie mensagens direto pelo WhatsApp:
+
+### Registrar Gastos
+```
+Gastei R$ 150 no mercado
+Paguei R$ 80 de internet
+Comprei R$ 50 de gasolina
+```
+
+### Registrar Receitas
+```
+Recebi R$ 5000 de salário
+Ganhei R$ 500 de freelance
+Entrada de R$ 1000
+```
+
+### Consultar Saldo
+```
+Qual meu saldo?
+Saldo
+Ver minhas contas
+```
+
+### Ver Transações
+```
+Minhas transações
+Últimas transações
+Ver gastos
+```
+
+### Ver Metas
+```
+Minhas metas
+Como estão minhas metas?
+```
+
+### Ajuda
+```
+ajuda
+help
+/start
+```
+
+## ⚙️ Requisitos
+
+- **Node.js** 18 ou superior
+- **PostgreSQL** (ou Docker)
+- **Redis** (ou Docker)
+- **Git**
+
+### Termux (Android)
+```bash
+pkg install nodejs git postgresql redis -y
+```
+
+### Git Bash (Windows)
+- Instale Node.js: https://nodejs.org
+- Instale PostgreSQL: https://www.postgresql.org/download/windows/
+- Instale Redis: https://github.com/microsoftarchive/redis/releases (ou use Docker)
+- Git Bash já vem com o Git for Windows
+
+## 🆘 Solução de Problemas
+
+### Bot não responde
+
+1. Verifique se a sessão está conectada:
+```bash
+curl http://localhost:3001/whatsapp/status/minha-sessao
+```
+
+2. Verifique os logs do servidor no terminal
+
+3. Reinicie a sessão:
+```bash
+curl -X POST http://localhost:3001/whatsapp/disconnect/minha-sessao
+```
+
+### Erro de autenticação
+
+Seu número precisa estar cadastrado no banco de dados. Após criar um usuário, vincule seu número WhatsApp:
+
+```sql
+INSERT INTO "WhatsAppContact" (id, "phoneNumber", "userId", "isVerified")
+VALUES (gen_random_uuid(), '5511999999999', '<user-id>', true);
+```
+
+**Nota:** Substitua:
+- `5511999999999` pelo seu número WhatsApp com código do país (sem + ou espaços)
+- `<user-id>` pelo ID do usuário no banco de dados (pode ser obtido consultando a tabela User)
+
+## 📚 Mais Informações
+
+- **Comandos Completos**: Ver arquivo `WHATSAPP_BOT.md`
+- **Configuração Avançada**: Ver arquivo `SETUP.md`
 
 ## 📜 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
----
-
-**Desenvolvido com ❤️ usando NestJS, Next.js, Prisma e shadcn/ui**
+MIT License - Veja LICENSE para mais detalhes
