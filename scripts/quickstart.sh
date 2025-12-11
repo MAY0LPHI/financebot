@@ -49,6 +49,6 @@ echo -e "${BLUE}🌱 Seeding database with sample data...${NC}"
 docker compose exec -T backend npm run prisma:seed
 
 echo -e "\n${GREEN}✅ Setup complete!${NC}\n"
-echo -e "${BLUE}📱 O bot WhatsApp será iniciado automaticamente${NC}"
+echo -e "${BLUE}📱 The WhatsApp bot will start automatically${NC}"
 echo -e "${BLUE}📊 View logs:${NC} docker compose logs -f"
 echo -e "${BLUE}🛑 Stop services:${NC} docker compose down\n"
