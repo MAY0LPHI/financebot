@@ -39,37 +39,40 @@ npm run install:all
 # Inicie o backend
 npm run dev
 
-# Em outro terminal, acesse a API
+# Acesse a API em:
+# http://localhost:3001
 # http://localhost:3001/api/docs
 ```
 
 **API Backend**: http://localhost:3001  
-**Documentação da API**: http://localhost:3001/api/docs
+**Documentação da API (Swagger)**: http://localhost:3001/api/docs
 
 ## 📚 Documentação Completa
 
 Para instruções detalhadas de instalação, configuração e uso, consulte:
 - [**SETUP.md**](SETUP.md) - Guia completo de instalação e configuração
-- [**WhatsApp Pairing Console**](docs/WHATSAPP_PAIRING_CONSOLE.md) - Console de pareamento WhatsApp
+- [**WHATSAPP_BOT.md**](WHATSAPP_BOT.md) - Guia de uso do bot WhatsApp
 - [**API Docs**](http://localhost:3001/api/docs) - Swagger/OpenAPI (após iniciar)
-- [**API Collection**](docs/API_COLLECTION.json) - Postman/Insomnia
 
 ## 🏗️ Arquitetura
 
 ```
-bot-fin-site/
+financebot/
 ├── backend/              # NestJS + Prisma + PostgreSQL
 │   ├── src/
-│   │   ├── auth/        # JWT + 2FA TOTP
-│   │   ├── transactions/
-│   │   ├── accounts/
+│   │   ├── users/       # Gerenciamento de usuários
+│   │   ├── accounts/    # Contas bancárias
+│   │   ├── cards/       # Cartões de crédito/débito
+│   │   ├── categories/  # Categorização
+│   │   ├── transactions/# Transações financeiras
+│   │   ├── budgets/     # Orçamentos
+│   │   ├── goals/       # Metas financeiras
+│   │   ├── reports/     # Relatórios e analytics
+│   │   ├── import/      # Importação CSV/OFX
 │   │   ├── chat/        # Bot conversacional
-│   │   └── reports/     # Relatórios e analytics
+│   │   ├── whatsapp/    # Integração WhatsApp
+│   │   └── webhooks/    # Webhooks (mock)
 │   └── prisma/          # Schema e migrations
-├── frontend/            # Next.js 14 + shadcn/ui + ECharts
-│   └── src/
-│       ├── app/         # Pages (App Router)
-│       └── components/  # UI components
 ├── shared/              # Tipos TypeScript compartilhados
 └── docker-compose.yml   # Stack completa
 ```
@@ -78,26 +81,26 @@ bot-fin-site/
 
 ### Funcionalidades Principais
 
-- ✅ **Bot WhatsApp** para controle financeiro completo
+- ✅ **Bot WhatsApp** integrado com whatsapp-web.js para controle financeiro completo
+- ✅ **Pareamento via QR Code** para autenticação
 - ✅ Gerenciamento de contas bancárias e cartões
 - ✅ Registro de transações (receitas/despesas/transferências)
 - ✅ Categorização automática e manual
 - ✅ Metas e orçamentos com alertas
 - ✅ Importação de extratos (CSV/OFX)
 - ✅ Comandos em português para facilitar o uso
-- ✅ Relatórios via comandos do bot
+- ✅ Relatórios via API REST
 - ✅ Multi-moeda com conversão
-- ✅ Notificações via WhatsApp
+- ✅ API REST completa com Swagger
 
 ### Segurança
 
-- 🔒 Autenticação JWT com refresh tokens
-- 🔒 2FA com TOTP (Google Authenticator/Authy)
 - 🔒 Rate limiting por IP
 - 🔒 Validação e sanitização de entrada
-- 🔒 Criptografia de senhas com bcrypt
 - 🔒 CORS configurável
-- 🔒 Proteção contra SQL injection e XSS
+- 🔒 Proteção contra SQL injection (via Prisma)
+- 🔒 Sessões WhatsApp criptografadas
+- 🔒 Verificação de contatos WhatsApp autorizados
 
 ## 🛠️ Tecnologias
 
@@ -106,17 +109,14 @@ bot-fin-site/
 - **Prisma** - ORM type-safe
 - **PostgreSQL** - Banco de dados relacional
 - **Redis** - Cache e sessões
-- **JWT** - Autenticação stateless
-- **Speakeasy** - 2FA TOTP
 - **Swagger** - Documentação OpenAPI
+- **TypeScript** - Type safety completo
 
-### Frontend
-- **Next.js 14** - React framework com App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first CSS
-- **shadcn/ui** - Componentes acessíveis
-- **ECharts** - Gráficos interativos
-- **Axios** - HTTP client
+### WhatsApp Integration
+- **whatsapp-web.js** - Biblioteca WhatsApp Web
+- **qrcode** - Geração de QR codes para pareamento
+- **qrcode-terminal** - QR codes no terminal
+- **Command parser** - Processamento de linguagem natural
 
 ### DevOps
 - **Docker** - Containerização
@@ -190,12 +190,12 @@ make studio           # Abrir Prisma Studio
 
 ### Estrutura de Pastas
 
-- `backend/src/` - Código fonte da API
-- `frontend/src/app/` - Pages do Next.js
-- `frontend/src/components/` - Componentes reutilizáveis
+- `backend/src/` - Código fonte da API NestJS
+- `backend/prisma/` - Schema do banco e migrations
 - `shared/src/` - Tipos TypeScript compartilhados
 - `docs/` - Documentação adicional
 - `scripts/` - Scripts utilitários
+- `.local/` - Arquivos locais do WhatsApp (sessões, cache)
 
 ### Comandos NPM
 
@@ -220,7 +220,7 @@ Contribuições são bem-vindas! Por favor:
 
 ## 📞 Suporte
 
-Para questões e suporte, abra uma [issue no GitHub](https://github.com/MAY0LPHI/bot-fin-site/issues).
+Para questões e suporte, abra uma [issue no GitHub](https://github.com/MAY0LPHI/financebot/issues).
 
 ## 📜 Licença
 
