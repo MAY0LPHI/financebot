@@ -316,6 +316,7 @@ docker compose -f docker-compose.yml up -d
 5. **WhatsApp QR Code expirado**: Solicite um novo QR code via API `/whatsapp/init`
 6. **Sessão WhatsApp desconectada**: Reinicie a sessão usando os endpoints `/whatsapp/disconnect` e `/whatsapp/init`
 7. **Erro de pareamento WhatsApp**: Verifique se o número está no formato correto com código do país (ex: 5511999999999)
+8. **TypeScript error `Module has no exported member`**: Execute `cd backend && npx prisma generate` para regenerar o Prisma Client após mudanças no schema
 
 ## 📝 Licença
 
