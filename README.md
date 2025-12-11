@@ -81,8 +81,8 @@ financebot/
 
 ### Funcionalidades Principais
 
-- ✅ **Bot WhatsApp** integrado com Baileys para controle financeiro completo
-- ✅ **Pareamento via QR Code** ou código de telefone
+- ✅ **Bot WhatsApp** integrado com whatsapp-web.js para controle financeiro completo
+- ✅ **Pareamento via QR Code** para autenticação
 - ✅ Gerenciamento de contas bancárias e cartões
 - ✅ Registro de transações (receitas/despesas/transferências)
 - ✅ Categorização automática e manual
@@ -113,9 +113,9 @@ financebot/
 - **TypeScript** - Type safety completo
 
 ### WhatsApp Integration
-- **@whiskeysockets/baileys** - Biblioteca WhatsApp Web
-- **QR Code pairing** - Autenticação via QR Code
-- **Phone pairing** - Autenticação via código
+- **whatsapp-web.js** - Biblioteca WhatsApp Web
+- **qrcode** - Geração de QR codes para pareamento
+- **qrcode-terminal** - QR codes no terminal
 - **Command parser** - Processamento de linguagem natural
 
 ### DevOps

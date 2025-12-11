@@ -35,7 +35,7 @@ Sistema de gestão financeira pessoal que combina:
 - ✅ Cartões de crédito e débito
 - ✅ Metas e orçamentos com alertas
 - ✅ Importação de extratos (CSV/OFX)
-- ✅ Bot WhatsApp integrado com Baileys
+- ✅ Bot WhatsApp integrado com whatsapp-web.js
 - ✅ Relatórios via API REST
 - ✅ Exportação de dados (CSV)
 - ✅ Multi-moeda
@@ -171,7 +171,16 @@ CORS_ORIGIN=http://localhost:3000
 
 #### WhatsApp Configuration
 
-O bot WhatsApp utiliza a biblioteca Baileys e armazena as sessões localmente no diretório `.local/`. As configurações são gerenciadas automaticamente pelo sistema.
+O bot WhatsApp utiliza a biblioteca whatsapp-web.js e armazena as sessões criptografadas localmente no diretório `.local/`. 
+
+**Recursos WhatsApp:**
+- Sessões criptografadas armazenadas em `.local/`
+- Pareamento via QR Code
+- Suporte a múltiplas sessões simultâneas
+- Reconexão automática em caso de desconexão
+- Processamento de comandos em linguagem natural
+
+Para mais detalhes sobre configuração e uso, consulte [WHATSAPP_BOT.md](WHATSAPP_BOT.md).
 
 ## 💻 Uso
 
@@ -304,6 +313,9 @@ docker compose -f docker-compose.yml up -d
 2. **Migrations não aplicadas**: Execute `npx prisma migrate dev` no backend
 3. **Porta em uso**: Altere as portas em `.env` e `docker-compose.yml`
 4. **Redis não conecta**: Verifique se Redis está rodando na porta correta
+5. **WhatsApp QR Code expirado**: Solicite um novo QR code via API `/whatsapp/init`
+6. **Sessão WhatsApp desconectada**: Reinicie a sessão usando os endpoints `/whatsapp/disconnect` e `/whatsapp/init`
+7. **Erro de pareamento WhatsApp**: Verifique se o número está no formato correto com código do país (ex: 5511999999999)
 
 ## 📝 Licença
 
