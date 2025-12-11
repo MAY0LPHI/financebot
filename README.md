@@ -1,15 +1,15 @@
-# Bot de Controle Financeiro + Painel Web
+# Bot de Controle Financeiro via WhatsApp
 
-Sistema completo de controle financeiro com bot conversacional e painel web administrativo.
+Sistema de controle financeiro através de bot conversacional no WhatsApp.
 
 ## 🎯 Visão Geral
 
-- **Bot** para registrar receitas, despesas, transferências e metas via chat
-- **Painel Web** responsivo com dashboards, gráficos e relatórios
+- **Bot WhatsApp** para registrar receitas, despesas, transferências e metas via mensagens
 - **Backend API** robusta com NestJS, Prisma, PostgreSQL e Redis
-- **Autenticação** segura com JWT e 2FA TOTP
+- **Comandos em Português** para facilitar o uso
 - **Importação** de extratos (CSV/OFX)
 - **Multi-moeda** e categorização inteligente
+- **Relatórios** via comandos do bot
 
 ## ⚡ Quick Start
 
@@ -17,31 +17,34 @@ Sistema completo de controle financeiro com bot conversacional e painel web admi
 
 ```bash
 # Clone o repositório
-git clone https://github.com/MAY0LPHI/bot-fin-site.git
-cd bot-fin-site
+git clone https://github.com/MAY0LPHI/financebot.git
+cd financebot
 
-# Execute o script de quick start
-./scripts/quickstart.sh
-
-# Ou manualmente:
+# Inicie os serviços
 docker compose up -d
+
+# Execute as migrações do banco
 docker compose exec backend npx prisma migrate deploy
+
+# Popule o banco com dados iniciais
 docker compose exec backend npm run prisma:seed
 ```
 
-### Com Make
+### Desenvolvimento Local
 
 ```bash
-make quickstart  # Inicia tudo com Docker
-make dev         # Desenvolvimento local
-make help        # Ver todos os comandos
+# Instale as dependências
+npm run install:all
+
+# Inicie o backend
+npm run dev
+
+# Em outro terminal, acesse a API
+# http://localhost:3001/api/docs
 ```
 
-**Acesse**: http://localhost:3000
-
-**Credenciais**:
-- Email: `demo@finbot.test`
-- Senha: `Demo123!`
+**API Backend**: http://localhost:3001  
+**Documentação da API**: http://localhost:3001/api/docs
 
 ## 📚 Documentação Completa
 
@@ -75,16 +78,16 @@ bot-fin-site/
 
 ### Funcionalidades Principais
 
+- ✅ **Bot WhatsApp** para controle financeiro completo
 - ✅ Gerenciamento de contas bancárias e cartões
 - ✅ Registro de transações (receitas/despesas/transferências)
 - ✅ Categorização automática e manual
 - ✅ Metas e orçamentos com alertas
 - ✅ Importação de extratos (CSV/OFX)
-- ✅ Bot conversacional para registros rápidos
-- ✅ Relatórios e gráficos interativos (ECharts)
-- ✅ Exportação de dados (CSV/PDF)
+- ✅ Comandos em português para facilitar o uso
+- ✅ Relatórios via comandos do bot
 - ✅ Multi-moeda com conversão
-- ✅ Tema claro/escuro
+- ✅ Notificações via WhatsApp
 
 ### Segurança
 

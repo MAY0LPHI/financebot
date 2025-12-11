@@ -23,11 +23,10 @@ async function bootstrap() {
 
   // Swagger documentation
   const config = new DocumentBuilder()
-    .setTitle('FinBot API')
-    .setDescription('Financial Control Bot API Documentation')
+    .setTitle('FinBot WhatsApp API')
+    .setDescription('API de Controle Financeiro via WhatsApp Bot')
     .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('auth', 'Authentication endpoints')
+    .addTag('whatsapp', 'WhatsApp Bot endpoints')
     .addTag('users', 'User management')
     .addTag('accounts', 'Account management')
     .addTag('cards', 'Card management')
@@ -46,8 +45,9 @@ async function bootstrap() {
 
   const port = process.env.APP_PORT || 3001;
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+  console.log(`🤖 FinBot WhatsApp está rodando em: http://localhost:${port}`);
+  console.log(`📚 Documentação da API: http://localhost:${port}/api/docs`);
+  console.log(`💬 Bot WhatsApp pronto para receber mensagens!`);
 }
 
 bootstrap();

@@ -5,14 +5,11 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiProperty } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { AdminGuard } from '../admin/guards/admin.guard';
 import { WhatsAppService } from './whatsapp.service';
 
 class InitSessionDto {
@@ -31,8 +28,6 @@ class PairingCodeDto {
 
 @ApiTags('whatsapp')
 @Controller('whatsapp')
-@UseGuards(JwtAuthGuard, AdminGuard)
-@ApiBearerAuth()
 export class WhatsAppController {
   constructor(private readonly whatsappService: WhatsAppService) {}
 
