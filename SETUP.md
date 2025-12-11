@@ -35,28 +35,26 @@ Sistema de gestão financeira pessoal que combina:
 - ✅ Cartões de crédito e débito
 - ✅ Metas e orçamentos com alertas
 - ✅ Importação de extratos (CSV/OFX)
-- ✅ Bot conversacional para registros rápidos
-- ✅ Relatórios e gráficos interativos
-- ✅ Exportação de dados (CSV/PDF)
+- ✅ Bot WhatsApp integrado com Baileys
+- ✅ Relatórios via API REST
+- ✅ Exportação de dados (CSV)
 - ✅ Multi-moeda
-- ✅ Tema claro/escuro
+- ✅ API REST completa com Swagger
 
 ### Segurança
 
-- 🔒 Autenticação JWT
-- 🔒 2FA com TOTP (Google Authenticator)
-- 🔒 Rate limiting
+- 🔒 Rate limiting por IP
 - 🔒 Validação e sanitização de dados
-- 🔒 Criptografia de senhas (bcrypt)
-- 🔒 HTTPS em produção
+- 🔒 Proteção contra SQL injection (via Prisma)
+- 🔒 CORS configurável
+- 🔒 Sessões WhatsApp criptografadas localmente
 
 ## 🏗️ Arquitetura
 
 ```
-bot-fin-site/
+financebot/
 ├── backend/              # NestJS API
 │   ├── src/
-│   │   ├── auth/        # Autenticação e autorização
 │   │   ├── users/       # Gerenciamento de usuários
 │   │   ├── accounts/    # Contas bancárias
 │   │   ├── cards/       # Cartões
@@ -67,14 +65,10 @@ bot-fin-site/
 │   │   ├── reports/     # Relatórios
 │   │   ├── import/      # Importação CSV/OFX
 │   │   ├── chat/        # Bot conversacional
+│   │   ├── whatsapp/    # Integração WhatsApp
 │   │   └── webhooks/    # Webhooks (mock)
 │   ├── prisma/          # Schema e migrations
 │   └── test/            # Testes
-├── frontend/            # Next.js App
-│   ├── src/
-│   │   ├── app/        # Pages (App Router)
-│   │   ├── components/ # Componentes React
-│   │   └── lib/        # Utilitários e API
 ├── shared/              # Tipos compartilhados
 ├── docs/                # Documentação adicional
 ├── docker-compose.yml   # Orquestração de containers
@@ -95,13 +89,12 @@ bot-fin-site/
 
 ```bash
 # Clone o repositório
-git clone https://github.com/MAY0LPHI/bot-fin-site.git
-cd bot-fin-site
+git clone https://github.com/MAY0LPHI/financebot.git
+cd financebot
 
 # Copie os arquivos de exemplo de ambiente
 cp .env.example .env
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
 
 # Inicie todos os serviços
 docker compose up -d
@@ -114,7 +107,6 @@ docker compose exec backend npm run prisma:seed
 ```
 
 Acesse:
-- **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:3001
 - **API Docs**: http://localhost:3001/api/docs
 
@@ -122,29 +114,26 @@ Acesse:
 
 ```bash
 # Clone o repositório
-git clone https://github.com/MAY0LPHI/bot-fin-site.git
-cd bot-fin-site
+git clone https://github.com/MAY0LPHI/financebot.git
+cd financebot
+
+# Copie o arquivo de configuração
+cp .env.example .env
 
 # Instale as dependências
 npm install
 
 # Configure o banco de dados PostgreSQL e Redis
-# Atualize os arquivos .env com suas credenciais
+# Atualize o arquivo .env com suas credenciais
 
-# Backend
+# Execute migrations e seed
 cd backend
-cp .env.example .env
-npm install
 npx prisma migrate dev
 npx prisma generate
 npm run prisma:seed
-npm run start:dev
 
-# Em outro terminal - Frontend
-cd frontend
-cp .env.example .env
-npm install
-npm run dev
+# Inicie o servidor
+npm run start:dev
 ```
 
 ## ⚙️ Configuração
@@ -180,12 +169,9 @@ TOTP_APP_NAME=FinBot
 CORS_ORIGIN=http://localhost:3000
 ```
 
-#### Frontend (.env)
+#### WhatsApp Configuration
 
-```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
-NEXT_PUBLIC_CHAT_WIDGET_KEY=demo-chat-key
-```
+O bot WhatsApp utiliza a biblioteca Baileys e armazena as sessões localmente no diretório `.local/`. As configurações são gerenciadas automaticamente pelo sistema.
 
 ## 💻 Uso
 
@@ -197,36 +183,30 @@ NEXT_PUBLIC_CHAT_WIDGET_KEY=demo-chat-key
 
 ### Principais Funcionalidades
 
-1. **Login**: Acesse com as credenciais demo
-2. **Dashboard**: Visualize saldo, receitas, despesas
+1. **API REST**: Acesse endpoints da API
+2. **WhatsApp Bot**: Interaja via WhatsApp
 3. **Transações**: Registre e gerencie transações
 4. **Contas**: Configure suas contas bancárias
 5. **Orçamentos**: Crie e acompanhe orçamentos
 6. **Metas**: Defina objetivos financeiros
-7. **Relatórios**: Gere análises e gráficos
-8. **Chat Bot**: Use o chat para registros rápidos
+7. **Relatórios**: Gere análises via API
+8. **Chat Bot**: Use o chat conversacional
 
 ### Comandos NPM
 
 ```bash
 # Desenvolvimento
-npm run dev              # Inicia backend e frontend
-npm run dev:backend      # Apenas backend
-npm run dev:frontend     # Apenas frontend
+npm run dev              # Inicia backend em modo dev
 
 # Build
 npm run build            # Build completo
-npm run build:backend    # Build backend
-npm run build:frontend   # Build frontend
 
 # Testes
 npm run test             # Testes completos
-npm run test:backend     # Testes backend
-npm run test:e2e         # Testes E2E backend
 
 # Lint e Format
-npm run lint             # Lint completo
-npm run format           # Format completo
+npm run lint             # Lint código
+npm run format           # Format código
 
 # Docker
 npm run docker:up        # Inicia containers
@@ -236,7 +216,6 @@ npm run docker:logs      # Visualiza logs
 # Prisma
 npm run prisma:migrate   # Executa migrations
 npm run prisma:seed      # Popula banco com dados
-npm run prisma:studio    # Abre Prisma Studio
 ```
 
 ## 📚 API Documentation
@@ -322,9 +301,9 @@ docker compose -f docker-compose.yml up -d
 ### Problemas Comuns
 
 1. **Erro de conexão com banco**: Verifique se PostgreSQL está rodando e as credenciais estão corretas
-2. **Erro de CORS**: Verifique se `CORS_ORIGIN` no backend aponta para o frontend
-3. **Migrations não aplicadas**: Execute `npx prisma migrate dev` no backend
-4. **Porta em uso**: Altere as portas em `.env` e `docker-compose.yml`
+2. **Migrations não aplicadas**: Execute `npx prisma migrate dev` no backend
+3. **Porta em uso**: Altere as portas em `.env` e `docker-compose.yml`
+4. **Redis não conecta**: Verifique se Redis está rodando na porta correta
 
 ## 📝 Licença
 
