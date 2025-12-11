@@ -6,7 +6,7 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 FinBot - Quick Start Script${NC}\n"
+echo -e "${BLUE}🚀 FinBot WhatsApp - Quick Start Script${NC}\n"
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -30,11 +30,6 @@ if [ ! -f backend/.env ]; then
     cp backend/.env.example backend/.env
 fi
 
-if [ ! -f frontend/.env ]; then
-    echo -e "${BLUE}📝 Creating frontend .env file...${NC}"
-    cp frontend/.env.example frontend/.env
-fi
-
 echo -e "${GREEN}✅ Environment files created${NC}\n"
 
 # Start Docker Compose
@@ -54,12 +49,6 @@ echo -e "${BLUE}🌱 Seeding database with sample data...${NC}"
 docker compose exec -T backend npm run prisma:seed
 
 echo -e "\n${GREEN}✅ Setup complete!${NC}\n"
-echo -e "${BLUE}📱 Access the application:${NC}"
-echo -e "  Frontend: ${GREEN}http://localhost:3000${NC}"
-echo -e "  Backend API: ${GREEN}http://localhost:3001${NC}"
-echo -e "  API Docs: ${GREEN}http://localhost:3001/api/docs${NC}\n"
-echo -e "${BLUE}🔑 Demo credentials:${NC}"
-echo -e "  Email: ${GREEN}demo@finbot.test${NC}"
-echo -e "  Password: ${GREEN}Demo123!${NC}\n"
+echo -e "${BLUE}📱 O bot WhatsApp será iniciado automaticamente${NC}"
 echo -e "${BLUE}📊 View logs:${NC} docker compose logs -f"
 echo -e "${BLUE}🛑 Stop services:${NC} docker compose down\n"

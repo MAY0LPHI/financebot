@@ -1,6 +1,6 @@
-# Bot de Controle Financeiro + Painel Web
+# Bot de Controle Financeiro via WhatsApp
 
-Sistema completo de controle financeiro com bot conversacional e painel web administrativo.
+Sistema de controle financeiro via bot WhatsApp integrado.
 
 ## 📋 Índice
 
@@ -11,62 +11,41 @@ Sistema completo de controle financeiro com bot conversacional e painel web admi
 - [Instalação](#instalação)
 - [Configuração](#configuração)
 - [Uso](#uso)
-- [API Documentation](#api-documentation)
 - [Testes](#testes)
 - [Deploy](#deploy)
 
 ## 🎯 Visão Geral
 
-Sistema de gestão financeira pessoal que combina:
-- **Backend API** (NestJS + Prisma + PostgreSQL + Redis)
-- **Frontend Web** (Next.js + shadcn/ui + ECharts)
-- **Bot Conversacional** para registrar transações via chat
-- **Autenticação** com JWT e 2FA TOTP
-- **Importação** de extratos (CSV/OFX)
-- **Relatórios** e dashboards interativos
+Sistema de gestão financeira pessoal que permite:
+- **Bot WhatsApp** para registrar transações via chat
+- **Registro** de receitas, despesas e saldo
+- **Consulta** de transações e metas
+- **Categorização** automática de gastos
 
 ## ✨ Características
 
 ### Funcionalidades Principais
 
-- ✅ Gerenciamento de contas bancárias
-- ✅ Registro de transações (receitas/despesas/transferências)
-- ✅ Categorização automática e manual
-- ✅ Cartões de crédito e débito
-- ✅ Metas e orçamentos com alertas
-- ✅ Importação de extratos (CSV/OFX)
+- ✅ Gerenciamento de contas bancárias via WhatsApp
+- ✅ Registro de transações (receitas/despesas)
+- ✅ Categorização automática
+- ✅ Metas e orçamentos
 - ✅ Bot WhatsApp integrado com whatsapp-web.js
-- ✅ Relatórios via API REST
-- ✅ Exportação de dados (CSV)
-- ✅ Multi-moeda
-- ✅ API REST completa com Swagger
+- ✅ Inicialização automática da sessão
 
 ### Segurança
 
-- 🔒 Rate limiting por IP
-- 🔒 Validação e sanitização de dados
 - 🔒 Proteção contra SQL injection (via Prisma)
-- 🔒 CORS configurável
 - 🔒 Sessões WhatsApp criptografadas localmente
 
 ## 🏗️ Arquitetura
 
 ```
 financebot/
-├── backend/              # NestJS API
+├── backend/              # NestJS
 │   ├── src/
-│   │   ├── users/       # Gerenciamento de usuários
-│   │   ├── accounts/    # Contas bancárias
-│   │   ├── cards/       # Cartões
-│   │   ├── categories/  # Categorias
-│   │   ├── transactions/# Transações
-│   │   ├── budgets/     # Orçamentos
-│   │   ├── goals/       # Metas
-│   │   ├── reports/     # Relatórios
-│   │   ├── import/      # Importação CSV/OFX
-│   │   ├── chat/        # Bot conversacional
-│   │   ├── whatsapp/    # Integração WhatsApp
-│   │   └── webhooks/    # Webhooks (mock)
+│   │   ├── whatsapp/    # Integração WhatsApp e comandos
+│   │   └── prisma/      # Serviço de banco de dados
 │   ├── prisma/          # Schema e migrations
 │   └── test/            # Testes
 ├── shared/              # Tipos compartilhados
@@ -81,7 +60,6 @@ financebot/
 - Node.js 18+
 - Docker e Docker Compose (recomendado)
 - PostgreSQL 16+ (se não usar Docker)
-- Redis 7+ (se não usar Docker)
 
 ## 🚀 Instalação
 
@@ -106,9 +84,7 @@ docker compose exec backend npx prisma migrate deploy
 docker compose exec backend npm run prisma:seed
 ```
 
-Acesse:
-- **Backend API**: http://localhost:3001
-- **API Docs**: http://localhost:3001/api/docs
+O bot será iniciado automaticamente e exibirá o QR Code nos logs.
 
 ### Opção 2: Instalação Local
 
@@ -123,8 +99,8 @@ cp .env.example .env
 # Instale as dependências
 npm install
 
-# Configure o banco de dados PostgreSQL e Redis
-# Atualize o arquivo .env com suas credenciais
+# Configure o banco de dados PostgreSQL
+# Atualize o arquivo backend/.env com suas credenciais
 
 # Execute migrations e seed
 cd backend
@@ -148,25 +124,6 @@ APP_PORT=3001
 
 # Database
 DATABASE_URL=postgresql://finbot_user:finbot_pass@localhost:5432/finbot
-
-# Redis
-REDIS_URL=redis://localhost:6379/0
-
-# JWT
-JWT_SECRET=your-secret-key-change-in-production
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_SECRET=your-refresh-secret-key
-JWT_REFRESH_EXPIRES_IN=30d
-
-# Rate Limiting
-RATE_LIMIT_TTL=60
-RATE_LIMIT_MAX=100
-
-# 2FA
-TOTP_APP_NAME=FinBot
-
-# CORS
-CORS_ORIGIN=http://localhost:3000
 ```
 
 #### WhatsApp Configuration
@@ -175,8 +132,7 @@ O bot WhatsApp utiliza a biblioteca whatsapp-web.js e armazena as sessões cript
 
 **Recursos WhatsApp:**
 - Sessões criptografadas armazenadas em `.local/`
-- Pareamento via QR Code
-- Suporte a múltiplas sessões simultâneas
+- Pareamento automático via QR Code no terminal
 - Reconexão automática em caso de desconexão
 - Processamento de comandos em linguagem natural
 
@@ -184,22 +140,9 @@ Para mais detalhes sobre configuração e uso, consulte [WHATSAPP_BOT.md](WHATSA
 
 ## 💻 Uso
 
-### Credenciais de Demo
+### Iniciar o Bot
 
-- **Email**: demo@finbot.test
-- **Senha**: Demo123!
-- **Perfil**: Admin
-
-### Principais Funcionalidades
-
-1. **API REST**: Acesse endpoints da API
-2. **WhatsApp Bot**: Interaja via WhatsApp
-3. **Transações**: Registre e gerencie transações
-4. **Contas**: Configure suas contas bancárias
-5. **Orçamentos**: Crie e acompanhe orçamentos
-6. **Metas**: Defina objetivos financeiros
-7. **Relatórios**: Gere análises via API
-8. **Chat Bot**: Use o chat conversacional
+Ao executar `npm run start:dev`, o bot WhatsApp será iniciado automaticamente e exibirá um QR Code no terminal. Escaneie com seu WhatsApp para conectar.
 
 ### Comandos NPM
 
@@ -226,43 +169,6 @@ npm run docker:logs      # Visualiza logs
 npm run prisma:migrate   # Executa migrations
 npm run prisma:seed      # Popula banco com dados
 ```
-
-## 📚 API Documentation
-
-A documentação completa da API está disponível em:
-- **Swagger UI**: http://localhost:3001/api/docs
-
-### Principais Endpoints
-
-#### Autenticação
-- `POST /auth/register` - Registrar usuário
-- `POST /auth/login` - Login
-- `POST /auth/2fa/enable` - Habilitar 2FA
-- `POST /auth/2fa/verify` - Verificar código 2FA
-- `GET /auth/profile` - Obter perfil
-
-#### Transações
-- `GET /transactions` - Listar transações
-- `POST /transactions` - Criar transação
-- `GET /transactions/:id` - Obter transação
-- `PATCH /transactions/:id` - Atualizar transação
-- `DELETE /transactions/:id` - Deletar transação
-
-#### Contas
-- `GET /accounts` - Listar contas
-- `POST /accounts` - Criar conta
-- `PATCH /accounts/:id` - Atualizar conta
-- `DELETE /accounts/:id` - Deletar conta
-
-#### Relatórios
-- `GET /reports/cash-flow` - Fluxo de caixa
-- `GET /reports/expenses-by-category` - Despesas por categoria
-- `GET /reports/balance-by-account` - Saldo por conta
-
-#### Chat Bot
-- `POST /chat` - Enviar mensagem para o bot
-
-Ver `docs/API_COLLECTION.json` para coleção Postman/Insomnia completa.
 
 ## 🧪 Testes
 
@@ -300,10 +206,7 @@ docker compose -f docker-compose.yml up -d
 
 ⚠️ **IMPORTANTE**: Altere todas as secrets em produção!
 
-- `JWT_SECRET`: Use um valor forte e aleatório
-- `JWT_REFRESH_SECRET`: Use um valor diferente do JWT_SECRET
 - `DATABASE_URL`: Configure com credenciais seguras
-- `REDIS_URL`: Configure com senha em produção
 
 ## 🔧 Troubleshooting
 
@@ -312,11 +215,9 @@ docker compose -f docker-compose.yml up -d
 1. **Erro de conexão com banco**: Verifique se PostgreSQL está rodando e as credenciais estão corretas
 2. **Migrations não aplicadas**: Execute `npx prisma migrate dev` no backend
 3. **Porta em uso**: Altere as portas em `.env` e `docker-compose.yml`
-4. **Redis não conecta**: Verifique se Redis está rodando na porta correta
-5. **WhatsApp QR Code expirado**: Solicite um novo QR code via API `/whatsapp/init`
-6. **Sessão WhatsApp desconectada**: Reinicie a sessão usando os endpoints `/whatsapp/disconnect` e `/whatsapp/init`
-7. **Erro de pareamento WhatsApp**: Verifique se o número está no formato correto com código do país (ex: 5511999999999)
-8. **TypeScript error `Module has no exported member`**: Execute `cd backend && npx prisma generate` para regenerar o Prisma Client após mudanças no schema
+4. **QR Code não aparece**: Verifique os logs do terminal para ver o status
+5. **Sessão WhatsApp desconectada**: Reinicie o servidor para gerar novo QR Code
+6. **TypeScript error `Module has no exported member`**: Execute `cd backend && npx prisma generate` para regenerar o Prisma Client após mudanças no schema
 
 ## 📝 Licença
 
@@ -337,4 +238,4 @@ Para questões e suporte, abra uma issue no GitHub.
 
 ---
 
-**Desenvolvido com ❤️ usando NestJS, Next.js, Prisma e shadcn/ui**
+**Desenvolvido com ❤️ usando NestJS, Prisma e whatsapp-web.js**

@@ -1,11 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { WhatsAppStatus } from '@prisma/client';
 import { Client, LocalAuth } from 'whatsapp-web.js';
 import * as qrcode from 'qrcode-terminal';
-import * as QRCode from 'qrcode';
 import { CommandParserService } from './command-parser.service';
-import { WhatsAppGateway } from './whatsapp.gateway';
 
 interface WhatsAppClientData {
   client: Client;
@@ -14,6 +12,8 @@ interface WhatsAppClientData {
   pairingCode: string | null;
 }
 
+const DEFAULT_SESSION_NAME = 'main-session';
+
 @Injectable()
 export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   private clients: Map<string, WhatsAppClientData> = new Map();
@@ -21,20 +21,30 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private prisma: PrismaService,
     private commandParser: CommandParserService,
-    @Inject(forwardRef(() => WhatsAppGateway))
-    private gateway: WhatsAppGateway,
   ) {}
 
   async onModuleInit() {
+    // First, try to restore previously connected sessions
     const sessions = await this.prisma.whatsAppSession.findMany({
       where: { status: { in: ['CONNECTED', 'AUTHENTICATED'] } },
     });
 
-    for (const session of sessions) {
+    if (sessions.length > 0) {
+      for (const session of sessions) {
+        try {
+          console.log(`🔄 Restaurando sessão: ${session.name}`);
+          await this.initializeSession(session.name);
+        } catch (error) {
+          console.error(`Failed to restore session ${session.name}:`, error);
+        }
+      }
+    } else {
+      // No existing sessions, auto-initialize default session
+      console.log(`🚀 Inicializando sessão padrão: ${DEFAULT_SESSION_NAME}`);
       try {
-        await this.initializeSession(session.name);
+        await this.initializeSession(DEFAULT_SESSION_NAME);
       } catch (error) {
-        console.error(`Failed to restore session ${session.name}:`, error);
+        console.error(`Failed to initialize default session:`, error);
       }
     }
   }
@@ -72,7 +82,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
       });
     }
 
-    this.emitStatusUpdate(sessionName, 'CONNECTING');
+    console.log(`🔄 Conectando sessão: ${sessionName}`);
 
     const client = new Client({
       authStrategy: new LocalAuth({ clientId: sessionName }),
@@ -100,41 +110,24 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     this.clients.set(sessionName, clientData);
 
     client.on('qr', async (qr) => {
-      console.log(`QR received for session ${sessionName}`);
+      console.log(`\n📱 QR Code recebido para sessão ${sessionName}`);
+      console.log('Escaneie o QR code abaixo com seu WhatsApp:\n');
       qrcode.generate(qr, { small: true });
 
       clientData.qrCode = qr;
       clientData.status = 'QR_READY';
-
-      // Convert QR code to data URL for frontend
-      let qrDataUrl: string;
-      try {
-        qrDataUrl = await this.convertQrToDataUrl(qr);
-      } catch (error) {
-        console.error(
-          'Failed to convert QR code to data URL image, frontend may not display QR properly:',
-          error,
-        );
-        // Emit error status instead of attempting to continue with invalid data
-        await this.prisma.whatsAppSession.update({
-          where: { name: sessionName },
-          data: { status: 'DISCONNECTED' },
-        });
-        this.emitStatusUpdate(sessionName, 'DISCONNECTED');
-        return; // Don't emit QR code if conversion failed
-      }
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
         data: { status: 'QR_READY', qrCode: qr },
       });
 
-      this.emitStatusUpdate(sessionName, 'QR_READY', qrDataUrl);
-      this.gateway.emitQrCode(sessionName, qrDataUrl);
+      console.log('⏳ Aguardando escaneamento do QR Code...\n');
     });
 
     client.on('ready', async () => {
-      console.log(`Client ${sessionName} is ready!`);
+      console.log(`\n✅ Cliente ${sessionName} está pronto!`);
+      console.log('💬 Bot WhatsApp pronto para receber mensagens!\n');
       clientData.status = 'CONNECTED';
       clientData.qrCode = null;
 
@@ -146,47 +139,36 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
           lastActive: new Date(),
         },
       });
-
-      this.emitStatusUpdate(sessionName, 'CONNECTED');
-      this.gateway.emitSessionConnected(sessionName);
     });
 
     client.on('authenticated', async () => {
-      console.log(`Client ${sessionName} authenticated!`);
+      console.log(`🔐 Cliente ${sessionName} autenticado!`);
       clientData.status = 'AUTHENTICATED';
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
         data: { status: 'AUTHENTICATED' },
       });
-
-      this.emitStatusUpdate(sessionName, 'AUTHENTICATED');
     });
 
     client.on('auth_failure', async (msg) => {
-      console.error(`Authentication failure for ${sessionName}:`, msg);
+      console.error(`❌ Falha na autenticação para ${sessionName}:`, msg);
       clientData.status = 'DISCONNECTED';
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
         data: { status: 'DISCONNECTED' },
       });
-
-      this.emitStatusUpdate(sessionName, 'DISCONNECTED');
-      this.gateway.emitSessionDisconnected(sessionName, 'auth_failure');
     });
 
     client.on('disconnected', async (reason) => {
-      console.log(`Client ${sessionName} disconnected:`, reason);
+      console.log(`📴 Cliente ${sessionName} desconectado:`, reason);
       clientData.status = 'DISCONNECTED';
 
       await this.prisma.whatsAppSession.update({
         where: { name: sessionName },
         data: { status: 'DISCONNECTED' },
       });
-
-      this.emitStatusUpdate(sessionName, 'DISCONNECTED');
-      this.gateway.emitSessionDisconnected(sessionName, reason);
 
       this.clients.delete(sessionName);
     });
@@ -204,32 +186,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
         where: { name: sessionName },
         data: { status: 'DISCONNECTED' },
       });
-      this.emitStatusUpdate(sessionName, 'DISCONNECTED');
       throw error;
-    }
-  }
-
-  private emitStatusUpdate(
-    sessionName: string,
-    status: WhatsAppStatus,
-    qrCode?: string | null,
-    pairingCode?: string | null,
-  ) {
-    this.gateway.emitStatusUpdate({
-      sessionName,
-      status,
-      qrCode,
-      pairingCode,
-      timestamp: new Date(),
-    });
-  }
-
-  private async convertQrToDataUrl(qrString: string): Promise<string> {
-    try {
-      return await QRCode.toDataURL(qrString);
-    } catch (error) {
-      console.error('Error generating QR code image:', error);
-      throw new Error('Failed to generate QR code image');
     }
   }
 
@@ -264,9 +221,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     if (!clientData?.qrCode) {
       return null;
     }
-
-    // Convert QR code string to data URL
-    return this.convertQrToDataUrl(clientData.qrCode);
+    return clientData.qrCode;
   }
 
   async requestPairingCode(sessionName: string, phoneNumber: string): Promise<string | null> {
@@ -285,7 +240,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
         data: { pairingCode: code },
       });
 
-      this.emitStatusUpdate(sessionName, clientData.status, clientData.qrCode, code);
+      console.log(`\n🔑 Código de pareamento para ${sessionName}: ${code}\n`);
 
       return code;
     } catch (error) {
@@ -315,8 +270,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
         },
       });
 
-      this.emitStatusUpdate(sessionName, 'DISCONNECTED');
-      this.gateway.emitSessionDisconnected(sessionName, 'manual_disconnect');
+      console.log(`📴 Sessão ${sessionName} desconectada com sucesso`);
 
       return { success: true, message: 'Session disconnected successfully' };
     } catch (error) {
