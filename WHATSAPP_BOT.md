@@ -4,38 +4,16 @@ Este documento explica como configurar e usar o FinBot via WhatsApp.
 
 ## 📱 Configuração Inicial
 
-### 1. Iniciar uma Sessão WhatsApp
+### 1. Iniciar o Bot
 
-Você pode iniciar uma sessão usando a API REST ou através de comandos diretos:
+Ao executar `npm run start:dev`, o bot WhatsApp será iniciado automaticamente. Um QR Code será exibido no terminal.
 
-```bash
-# Usando curl para iniciar uma sessão
-curl -X POST http://localhost:3001/whatsapp/init \
-  -H "Content-Type: application/json" \
-  -d '{"sessionName": "minha-sessao"}'
-```
+### 2. Escanear o QR Code
 
-### 2. Obter o QR Code
-
-```bash
-# Obter o QR code para escanear no WhatsApp
-curl http://localhost:3001/whatsapp/qr/minha-sessao
-```
-
-Escaneie o QR code retornado com o WhatsApp do seu celular em:
+Escaneie o QR code exibido no terminal com o WhatsApp do seu celular em:
 - **WhatsApp > Configurações > Aparelhos Conectados > Conectar um aparelho**
 
-### 3. Alternativa: Código de Pareamento
-
-```bash
-# Solicitar código de pareamento
-curl -X POST http://localhost:3001/whatsapp/pair/minha-sessao \
-  -H "Content-Type: application/json" \
-  -d '{"phoneNumber": "5511999999999"}'
-```
-
-Digite o código recebido no WhatsApp do seu celular em:
-- **WhatsApp > Configurações > Aparelhos Conectados > Conectar com número de telefone**
+O bot estará pronto quando você ver a mensagem "✅ Cliente main-session está pronto!" no terminal.
 
 ## 💬 Comandos do Bot
 
@@ -88,7 +66,7 @@ Ver objetivos
 
 ### 1. Registrar seu Contato
 
-Primeiro, você precisa vincular seu número de WhatsApp a um usuário no sistema. Isso pode ser feito através da API ou diretamente no banco de dados:
+Primeiro, você precisa vincular seu número de WhatsApp a um usuário no sistema. Isso pode ser feito diretamente no banco de dados:
 
 ```sql
 -- Exemplo de vinculação no banco de dados
@@ -153,20 +131,11 @@ Bot: 📊 Últimas transações:
 
 ### Bot não responde
 
-1. Verifique se a sessão está conectada:
-```bash
-curl http://localhost:3001/whatsapp/status/minha-sessao
-```
+1. Verifique os logs do servidor no terminal
 
 2. Verifique se seu número está verificado no banco de dados
 
-3. Reinicie a sessão se necessário:
-```bash
-curl -X POST http://localhost:3001/whatsapp/disconnect/minha-sessao
-curl -X POST http://localhost:3001/whatsapp/init \
-  -H "Content-Type: application/json" \
-  -d '{"sessionName": "minha-sessao"}'
-```
+3. Reinicie o servidor para reconectar a sessão
 
 ### Erro de autenticação
 
@@ -178,14 +147,13 @@ Se você receber a mensagem "Seu número não está cadastrado ou verificado":
 
 ## 📚 Recursos Adicionais
 
-- **API Documentation**: http://localhost:3001/api/docs
 - **GitHub Issues**: Para reportar problemas ou sugerir melhorias
 - **Logs do Sistema**: Use `docker compose logs -f backend` para ver os logs em tempo real
 
 ## 🔒 Segurança
 
-- Nunca compartilhe seu QR code ou código de pareamento
+- Nunca compartilhe seu QR code
 - Apenas números verificados podem usar o bot
 - Mantenha seu banco de dados seguro
-- Use senhas fortes para PostgreSQL e Redis em produção
+- Use senhas fortes para PostgreSQL em produção
 - Configure variáveis de ambiente adequadas para produção

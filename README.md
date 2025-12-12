@@ -2,6 +2,8 @@
 
 Controle suas finanças direto pelo WhatsApp! Registre receitas, despesas e consulte seu saldo através de mensagens.
 
+O bot inicia automaticamente quando você executa o servidor - basta escanear o QR Code que aparece no terminal.
+
 ## 📱 Como Executar
 
 ### No Git Bash (Windows)
@@ -55,7 +57,7 @@ npm run start:dev
 
 ### 1. Configurar Banco de Dados
 
-Antes de iniciar, você precisa ter PostgreSQL e Redis instalados, ou usar Docker:
+Antes de iniciar, você precisa ter PostgreSQL instalado, ou usar Docker:
 
 **Com Docker (Recomendado):**
 ```bash
@@ -63,9 +65,9 @@ docker compose up -d postgres redis
 ```
 
 **Sem Docker:**
-- Instale PostgreSQL e Redis no seu sistema
+- Instale PostgreSQL no seu sistema
 - Crie um arquivo `.env` na pasta `backend/` baseado no `.env.example`
-- Configure a `DATABASE_URL` e `REDIS_URL`
+- Configure a `DATABASE_URL`
 
 ### 2. Inicializar o Banco
 
@@ -77,34 +79,10 @@ npm run prisma:seed
 
 ### 3. Iniciar o Bot
 
-O bot iniciará automaticamente quando você executar `npm run start:dev`.
+O bot iniciará **automaticamente** quando você executar `npm run start:dev`.
 
-O servidor ficará disponível em: `http://localhost:3001`
-
-## 📲 Conectar WhatsApp
-
-### 1. Iniciar Sessão
-
-Após iniciar o servidor, use curl ou Postman para iniciar uma sessão:
-
-```bash
-curl -X POST http://localhost:3001/whatsapp/init -H "Content-Type: application/json" -d '{"sessionName": "minha-sessao"}'
-```
-
-### 2. Obter QR Code
-
-```bash
-curl http://localhost:3001/whatsapp/qr/minha-sessao
-```
-
-Escaneie o QR code com seu WhatsApp em:
+Um QR Code será exibido no terminal - escaneie com seu WhatsApp:
 **Configurações > Aparelhos Conectados > Conectar um aparelho**
-
-### 3. Verificar Status
-
-```bash
-curl http://localhost:3001/whatsapp/status/minha-sessao
-```
 
 ## 💬 Comandos do Bot
 
@@ -155,35 +133,27 @@ help
 
 - **Node.js** 18 ou superior
 - **PostgreSQL** (ou Docker)
-- **Redis** (ou Docker)
 - **Git**
 
 ### Termux (Android)
 ```bash
-pkg install nodejs git postgresql redis -y
+pkg install nodejs git postgresql -y
 ```
 
 ### Git Bash (Windows)
 - Instale Node.js: https://nodejs.org
 - Instale PostgreSQL: https://www.postgresql.org/download/windows/
-- Instale Redis: https://github.com/microsoftarchive/redis/releases (ou use Docker)
 - Git Bash já vem com o Git for Windows
 
 ## 🆘 Solução de Problemas
 
 ### Bot não responde
 
-1. Verifique se a sessão está conectada:
-```bash
-curl http://localhost:3001/whatsapp/status/minha-sessao
-```
+1. Verifique os logs do servidor no terminal para ver o status da sessão
 
-2. Verifique os logs do servidor no terminal
+2. Verifique se o QR Code foi escaneado corretamente
 
-3. Reinicie a sessão:
-```bash
-curl -X POST http://localhost:3001/whatsapp/disconnect/minha-sessao
-```
+3. Reinicie o servidor para gerar um novo QR Code
 
 ### Erro de autenticação
 

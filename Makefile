@@ -9,10 +9,9 @@ help: ## Show this help message
 install: ## Install all dependencies
 	npm install
 	cd backend && npm install
-	cd frontend && npm install
 	cd shared && npm install
 
-dev: ## Start development servers
+dev: ## Start development server (WhatsApp Bot)
 	npm run dev
 
 build: ## Build all projects
@@ -28,8 +27,8 @@ format: ## Format all code
 	npm run format
 
 clean: ## Clean all build artifacts and dependencies
-	rm -rf node_modules backend/node_modules frontend/node_modules shared/node_modules
-	rm -rf backend/dist frontend/.next shared/dist
+	rm -rf node_modules backend/node_modules shared/node_modules
+	rm -rf backend/dist shared/dist
 	rm -rf backend/coverage
 
 docker-up: ## Start Docker containers
